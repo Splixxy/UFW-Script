@@ -1,14 +1,14 @@
 import os
-install = input("Would you like to install the required packages and software for this script? Yes (Y) or No (N):")
+install = input("Would you like to install the required packages and software for this script? Yes (Y), No (N):")
 if (install == "Y" or install == "y"):
-    distro = input("Please input the package manager of your linux system")
-    os.system("%s install pip3 -y" % distro)
-    os.system("pip3 install pyufw -y")
-    os.system("%s install ufw -y" % distro)
+    distro = input("Please input the package manager of your linux system:")
+    os.system("%s install python3-pip" % distro)
+    os.system("pip3 install pyufw")
+    os.system("%s install ufw" % distro)
     import pyufw as ufw
 
     def firewallEnable():
-        fEnable = input("Would you like to enable the UFW Firewall? Yes (Y) or No (N)")
+        fEnable = input("Would you like to enable the UFW Firewall? Yes (Y) or No (N):")
         if (fEnable == "Y" or fEnable =="y"):
             ufw.enable()
             print("UFW has been Enabled.")
@@ -22,65 +22,71 @@ if (install == "Y" or install == "y"):
 
     def addORdeleteRule():
         aORdQuestion = input("Would you like to add or Delete a rule from the firewall, Yes (Y) or No (N):")
-            if (aORdQuestion == "Y" or aORdQuestion == "y"):
-                aORd = input("what you like to do Add a rule or Delete a rule (A) or (D)")
-                if (aORd == "A" or aORd == "a"):
-                    aport = input("Enter the ports you would like to add from the firewall with a comma seperating them:")
-                    ufw.add("allow aport")
+        if (aORdQuestion == "Y" or aORdQuestion == "y"):
+            aORd = input("Would you like to do Add a rule or Delete a rule (A) or (D):")
+            if (aORd == "A" or aORd == "a"):
+                aport = input("Enter the ports you would like to add from the firewall with a comma seperating them:")
+                ufw.add("allow aport")
+            else:
+                numORrule = input("Would you like to delete by number or rule, Num (N) or Rule (R):")
+                if (numORrule == "R" or numORrule == "r"):
+                    dport = input("Enter the ports you would like to delete from the firewall with a common seperating them:")
+                    ufw.delete("allow dport")
                 else:
-                    numORrule = input("Would you like to delete by number or rule, Num (N) or Rule (R):")
-                    if (numORrule == "R" or numORrule == "r"):
-                        dport = input("Enter the ports you would like to delete from the firewall with a common seperating them:")
-                        ufw.delete("allow dport")
-                    else:
-                        ufw.get_rules()
-                        dport = input("Enter the ports you would like to delete from the firewall with a common seperating them:")
-                        ufw.delete(dport)
+                    ufw.get_rules()
+                    dport = input("Enter the ports you would like to delete from the firewall with a common seperating them:")
+                    ufw.delete(dport)
 
     def webServices():
-        ufw.add("allow 80")
-        ufw.add("allo 443")
-        fOpen = open("/etc/ufw/before.rules", "r")
-        contents = fOpen.readlines()
-        fOpen.close()
-        contents.insert(10, "\n*nat")
-        contents.insert(11, "\n:PREROUTING ACCEPT [0:0]")
-        contents.insert(12, "\n-A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080")
-        contents.insert(13, "\nCOMMIT")
-        fOpen = open("/etc/ufw/before.rules", "w")
-        contents = "".join(contents)
-        fOpen.write(contents)
-        fOpen.close()
-        print("Ports 80 & 443 have been added to the firewall.")
-        print("Port 80 is now being redirected to port 8080.")
+        webVerify = input("Would you like to allow port 80, 443 and forward port 80 to 8080, Yes (Y) or No (N):")
+        if (webVerify == "Y" or webVerify == "y"):
+            ufw.add("allow 80")
+            ufw.add("allow 443")
+            fOpen = open("/etc/ufw/before.rules", "r")
+            contents = fOpen.readlines()
+            fOpen.close()
+            contents.insert(10, "\n*nat")
+            contents.insert(11, "\n:PREROUTING ACCEPT [0:0]")
+            contents.insert(12, "\n-A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080")
+            contents.insert(13, "\nCOMMIT")
+            fOpen = open("/etc/ufw/before.rules", "w")
+            contents = "".join(contents)
+            fOpen.write(contents)
+            fOpen.close()
+            print("Ports 80 & 443 have been added to the firewall.")
+            print("Port 80 is now being redirected to port 8080.")
 
     def portForward():
-        dport = input("Please input the listening port:")
-        rPort = input("Please input the port you would like %s redirected to:" % dPort)
-        fOpen = open("/etc/ufw/before.rules", "r")
-        contents = fOpen.readlines()
-        fOpen.close()
-        contents.insert(10, "\n*nat")
-        contents.insert(11, "\n:PREROUTING ACCEPT [0:0]")
-        contents.insert(12, "\n-A PREROUTING -p tcp --dport %s -j REDIRECT --to-port %s" % (dPort,rPort))
-        contents.insert(13, "\nCOMMIT")
-        fOpen = open("/etc/ufw/before.rules", "w")
-        contents = "".join(contents)
-        fOpen.write(contents)
-        fOpen.close()
-        print("Port %s is now being redirected to %s." % (dPort,rPort))
+        portVerify = input("Would you like to forward a port, Yes (Y) or No (N):")
+        if (portVerify == "Y" or portVerify == "y"):
+            dport = input("Please input the listening port:")
+            rPort = input("Please input the port you would like %s redirected to:" % dPort)
+            fOpen = open("/etc/ufw/before.rules", "r")
+            contents = fOpen.readlines()
+            fOpen.close()
+            contents.insert(10, "\n*nat")
+            contents.insert(11, "\n:PREROUTING ACCEPT [0:0]")
+            contents.insert(12, "\n-A PREROUTING -p tcp --dport %s -j REDIRECT --to-port %s" % (dPort,rPort))
+            contents.insert(13, "\nCOMMIT")
+            fOpen = open("/etc/ufw/before.rules", "w")
+            contents = "".join(contents)
+            fOpen.write(contents)
+            fOpen.close()
+            print("Port %s is now being redirected to %s." % (dPort,rPort))
 
     def MySQL():
-        SQLports = input("would you like to open the ports for Classic protocol (C), X protocol (X), or Both (B)")
-        if (SQLports == "C" or SQLports == "c"):
-            ufw.add("allow 3306")
-            print("Port 3306 has been added to the firewall.")
-        elif (SQLports == "X" or SQLports == "x"):
-            ufw.add("allow 33060")
-            print("Port 33060 has been added to the firewall.")
-        else:
-            ufw.add("allow 3306,33060")
-            print("Ports 3306 & 33060 have been added to the firewall.")
+        MySQLverify = input("Would you like to open ports for MySQL, Yes (Y) or No (N):")
+        if (MySQLverify == "Y" or MySQLverify == "y"):
+            SQLports = input("would you like to open the ports for Classic protocol (C), X protocol (X), or Both (B):")
+            if (SQLports == "C" or SQLports == "c"):
+                ufw.add("allow 3306")
+                print("Port 3306 has been added to the firewall.")
+            elif (SQLports == "X" or SQLports == "x"):
+                ufw.add("allow 33060")
+                print("Port 33060 has been added to the firewall.")
+            else:
+                ufw.add("allow 3306,33060/tcp")
+                print("Ports 3306 & 33060 have been added to the firewall.")
 
     def mailPorts():
         mailPorts = input("What Mail services would like to allow through the firewall SMTP (SMTP), IMAP (IMAP), IMAPS (IMAPS), POP3 (POP3), Some (SOME), or All (A):")
@@ -101,9 +107,9 @@ if (install == "Y" or install == "y"):
             ufw.add("allow %s" % sPorts)
             print("Ports %s have been added to the firewall." % sPorts)
         else:
-            allPorts = "25,143,993,110"
+            allPorts = "25,143,993,110/tcp"
             ufw.add("allow %s" % allPorts)
-            Print("Ports %s have been added to the firewall." % allPorts)
+            print("Ports %s have been added to the firewall." % allPorts)
 
     def allowORblock():
         allowORblock = input("Would you like to allow specific hosts in the firewall hosts, Yes (Y) or No (N):")
@@ -127,7 +133,18 @@ if (install == "Y" or install == "y"):
         os.system("gzip -kv /etc/ufw/")
         print("/etc/ufw/ has been backupped.")
 
-    run = input("Would you like to run all (A) the functions or only 1 (1)")
+    def UFWshow():
+        iptable = ufw.show_raw()
+        beforeRule = ufw.show_before_rules()
+        userRule = ufw.show_user_rules()
+        print("Now showing raw iptable rules:")
+        print(iptable)
+        print("Now showing UFW before rules:")
+        print(beforeRule)
+        print("Now showing UFW user rules:")
+        print(userRule)
+
+    run = input("Would you like to run all (A) the functions or only 1 (1):")
     if (run == "A" or run == "a"):
         firewallEnable()
         addORdeleteRule()
@@ -137,22 +154,30 @@ if (install == "Y" or install == "y"):
         allowORblock()
         webServices()
         print("All functions completed")
-    elif (run == "1")
+        UFWshow()
+    elif (run == "1"):
         funSelect = input("Please input what function you would like to run firewallEnable (FIREWALLENABLE), addORdeleteRule (ADDORDELETERULE), portForward (PORTFORWARD, MySQL (MYSQL), mailPorts (MAILPORTS), allowORblock (ALLOWORBLOCK), or webServices (WEBSERVICES):")
         if (funSelect == "FIREWALLENABLE" or funSelect == "firewallenable"):
             firewallEnable()
+            UFWshow()
         elif (funSelect == "ADDORDELETERULE" or funSelect == "addordeleterule"):
             addORdeleteRule()
+            UFWshow()
         elif (funSelect == "PORTFORWARD" or funSelect == "portforward"):
             portForward()
+            UFWshow()
         elif (funSelect == "MYSQL" or funSelect == "mysql"):
             MySQL()
+            UFWshow()
         elif (funSelect == "MAILPORTS" or funSelect == "mailports"):
             mailPorts()
+            UFWshow()
         elif (funSelect == "ALLOWORBLOCK" or funSelect == "alloworblock"):
             allowORblock()
+            UFWshow()
         elif (funSelect == "WEBSERVICES" or funSelect == "webservices"):
             webServices()
+            UFWshow()
         else:
             print("No function was selected, program is now exiting.")
             exit()
