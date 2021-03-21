@@ -117,11 +117,23 @@ if (install == "Y" or install == "y"):
             hosts = input("Please input the IP or MAC Address you would like to allow")
             ufw.add("allow from %s" % hosts)
             print("%s is now allowed through the firewall." % hosts)
+            pingAllow = input("Would you like to allow port 7 (Ping/ICMP) requests, Yes (Y) or No (N):")
+            if (pingAllow == "Y" or pingAllow == "y"):
+                ufw.add("allow 7")
+                print("Port 7 has been added to the firewall.")
+                telnetAllow = input("Would you like to allow port 23 (Telnet) through the firewall, Yes (Y) or No (N):")
+                if (telnetAllow == "Y" or telnetAllow == "y"):
+                    ufw.add("allow 23")
+                    print("Port 23 has been added to the firewall.")
         else:
             pingAllow = input("Would you like to allow port 7 (Ping/ICMP) requests, Yes (Y) or No (N):")
             if (pingAllow == "Y" or pingAllow == "y"):
                 ufw.add("allow 7")
                 print("Port 7 has been added to the firewall.")
+                telnetAllow = input("Would you like to allow port 23 (Telnet) through the firewall, Yes (Y) or No (N):")
+                if (telnetAllow == "Y" or telnetAllow == "y"):
+                    ufw.add("allow 23")
+                    print("Port 23 has been added to the firewall.")
             else:
                 telnetAllow = input("Would you like to allow port 23 (Telnet) through the firewall, Yes (Y) or No (N):")
                 if (telnetAllow == "Y" or telnetAllow == "y"):
