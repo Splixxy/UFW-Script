@@ -138,7 +138,24 @@ if (install == "Y" or install == "y"):
         webServices()
         print("All functions completed")
     elif (run == "1")
-
+        funSelect = input("Please input what function you would like to run firewallEnable (FIREWALLENABLE), addORdeleteRule (ADDORDELETERULE), portForward (PORTFORWARD, MySQL (MYSQL), mailPorts (MAILPORTS), allowORblock (ALLOWORBLOCK), or webServices (WEBSERVICES):")
+        if (funSelect == "FIREWALLENABLE" or funSelect == "firewallenable"):
+            firewallEnable()
+        elif (funSelect == "ADDORDELETERULE" or funSelect == "addordeleterule"):
+            addORdeleteRule()
+        elif (funSelect == "PORTFORWARD" or funSelect == "portforward"):
+            portForward()
+        elif (funSelect == "MYSQL" or funSelect == "mysql"):
+            MySQL()
+        elif (funSelect == "MAILPORTS" or funSelect == "mailports"):
+            mailPorts()
+        elif (funSelect == "ALLOWORBLOCK" or funSelect == "alloworblock"):
+            allowORblock()
+        elif (funSelect == "WEBSERVICES" or funSelect == "webservices"):
+            webServices()
+        else:
+            print("No function was selected, program is now exiting.")
+            exit()
 
 else:
     print("Program is now exiting.")
