@@ -142,7 +142,7 @@ if (install == "Y" or install == "y"):
 
     def UFWbackup():
         os.system("%s install gzip" % distro)
-        os.system("gzip -kv /etc/ufw/")
+        os.system("tar -zcvf UFW.tar.gz /etc/ufw")
         print("/etc/ufw/ has been backupped.")
 
     def UFWshow():
@@ -165,31 +165,51 @@ if (install == "Y" or install == "y"):
         mailPorts()
         allowORblock()
         webServices()
+        UFWbackup()
         print("All functions completed")
         UFWshow()
     elif (run == "1"):
-        funSelect = input("Please input what function you would like to run firewallEnable (FIREWALLENABLE), addORdeleteRule (ADDORDELETERULE), portForward (PORTFORWARD, MySQL (MYSQL), mailPorts (MAILPORTS), allowORblock (ALLOWORBLOCK), or webServices (WEBSERVICES):")
+        funSelect = input("Please input what function you would like to run firewallEnable (FIREWALLENABLE), addORdeleteRule (ADDORDELETERULE), portForward (PORTFORWARD, MySQL (MYSQL), mailPorts (MAILPORTS), allowORblock (ALLOWORBLOCK), UFWbackup (UFWBACKUP), or webServices (WEBSERVICES):")
         if (funSelect == "FIREWALLENABLE" or funSelect == "firewallenable"):
             firewallEnable()
-            UFWshow()
+            UFWrun = input("Would you like to show the raw iptables, Yes (Y) or No (N):")
+            if (UFWrun == "Y" or UFWrun == "y"):
+                UFWshow()
         elif (funSelect == "ADDORDELETERULE" or funSelect == "addordeleterule"):
             addORdeleteRule()
-            UFWshow()
+            UFWrun = input("Would you like to show the raw iptables, Yes (Y) or No (N):")
+            if (UFWrun == "Y" or UFWrun == "y"):
+                UFWshow()
         elif (funSelect == "PORTFORWARD" or funSelect == "portforward"):
             portForward()
-            UFWshow()
+            UFWrun = input("Would you like to show the raw iptables, Yes (Y) or No (N):")
+            if (UFWrun == "Y" or UFWrun == "y"):
+                UFWshow()
         elif (funSelect == "MYSQL" or funSelect == "mysql"):
             MySQL()
-            UFWshow()
+            UFWrun = input("Would you like to show the raw iptables, Yes (Y) or No (N):")
+            if (UFWrun == "Y" or UFWrun == "y"):
+                UFWshow()
         elif (funSelect == "MAILPORTS" or funSelect == "mailports"):
             mailPorts()
-            UFWshow()
+            UFWrun = input("Would you like to show the raw iptables, Yes (Y) or No (N):")
+            if (UFWrun == "Y" or UFWrun == "y"):
+                UFWshow()
         elif (funSelect == "ALLOWORBLOCK" or funSelect == "alloworblock"):
             allowORblock()
-            UFWshow()
+            UFWrun = input("Would you like to show the raw iptables, Yes (Y) or No (N):")
+            if (UFWrun == "Y" or UFWrun == "y"):
+                UFWshow()
         elif (funSelect == "WEBSERVICES" or funSelect == "webservices"):
             webServices()
-            UFWshow()
+            UFWrun = input("Would you like to show the raw iptables, Yes (Y) or No (N):")
+            if (UFWrun == "Y" or UFWrun == "y"):
+                UFWshow()
+        elif (funSelect == "UFWBACKUP" or funSelect == "ufwbackup"):
+            UFWbackup()
+            UFWrun = input("Would you like to show the raw iptables, Yes (Y) or No (N):")
+            if (UFWrun == "Y" or UFWrun == "y"):
+                UFWshow()
         else:
             print("No function was selected, program is now exiting.")
             exit()
