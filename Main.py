@@ -45,10 +45,10 @@ if (install == "Y" or install == "y"):
             fOpen = open("/etc/ufw/before.rules", "r")
             contents = fOpen.readlines()
             fOpen.close()
-            contents.insert(10, "\n*nat")
-            contents.insert(11, "\n:PREROUTING ACCEPT [0:0]")
-            contents.insert(12, "\n-A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080")
-            contents.insert(13, "\nCOMMIT")
+            contents.insert(9, "\n*nat")
+            contents.insert(10, "\n:PREROUTING ACCEPT [0:0]")
+            contents.insert(11, "\n-A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080")
+            contents.insert(12, "\nCOMMIT\n")
             fOpen = open("/etc/ufw/before.rules", "w")
             contents = "".join(contents)
             fOpen.write(contents)
@@ -64,10 +64,10 @@ if (install == "Y" or install == "y"):
             fOpen = open("/etc/ufw/before.rules", "r")
             contents = fOpen.readlines()
             fOpen.close()
-            contents.insert(10, "\n*nat")
-            contents.insert(11, "\n:PREROUTING ACCEPT [0:0]")
-            contents.insert(12, "\n-A PREROUTING -p tcp --dport %s -j REDIRECT --to-port %s" % (dPort,rPort))
-            contents.insert(13, "\nCOMMIT")
+            contents.insert(9, "\n*nat")
+            contents.insert(10, "\n:PREROUTING ACCEPT [0:0]")
+            contents.insert(11, "\n-A PREROUTING -p tcp --dport %s -j REDIRECT --to-port %s" % (dPort,rPort))
+            contents.insert(12, "\nCOMMIT\n")
             fOpen = open("/etc/ufw/before.rules", "w")
             contents = "".join(contents)
             fOpen.write(contents)
@@ -117,24 +117,40 @@ if (install == "Y" or install == "y"):
             hosts = input("Please input the IP or MAC Address you would like to allow")
             ufw.add("allow from %s" % hosts)
             print("%s is now allowed through the firewall." % hosts)
-            pingAllow = input("Would you like to allow port 7 (Ping/ICMP) requests, Yes (Y) or No (N):")
+            pingAllow = input("Would you like to block (Ping/ICMP) requests, Yes (Y) or No (N):")
             if (pingAllow == "Y" or pingAllow == "y"):
-                ufw.add("allow 7")
-                print("Port 7 has been added to the firewall.")
-                telnetAllow = input("Would you like to allow port 23 (Telnet) through the firewall, Yes (Y) or No (N):")
-                if (telnetAllow == "Y" or telnetAllow == "y"):
-                    ufw.add("allow 23")
-                    print("Port 23 has been added to the firewall.")
+                with open('/etc/ufw/before.rules', 'r') as file:
+                    data = file.readlines()
+                data[38] = '-A ufw-before-input -p icmp --icmp-type destination-unreachable -j DROP\n'
+                data[39] = '-A ufw-before-input -p icmp --icmp-type source-quench -j DROP\n'
+                data[40] = '-A ufw-before-input -p icmp --icmp-type time-exceeded -j DROP\n'
+                data[41] = '-A ufw-before-input -p icmp --icmp-type parameter-problem -j DROP\n'
+                data[42] = '-A ufw-before-input -p icmp --icmp-type echo-request -j DROP\n'
+                with open('/etc/ufw/before.rules', 'w') as file:
+                    file.writelines( data )
+            print("/etc/ufw/before.rules has been updated to block ICMP")
+            telnetAllow = input("Would you like to allow port 23 (Telnet) through the firewall, Yes (Y) or No (N):")
+            if (telnetAllow == "Y" or telnetAllow == "y"):
+                ufw.add("allow 23")
+                print("Port 23 has been added to the firewall.")
         else:
-            pingAllow = input("Would you like to allow port 7 (Ping/ICMP) requests, Yes (Y) or No (N):")
+            pingAllow = input("Would you like to block (Ping/ICMP) requests, Yes (Y) or No (N):")
             if (pingAllow == "Y" or pingAllow == "y"):
-                ufw.add("allow 7")
-                print("Port 7 has been added to the firewall.")
-                telnetAllow = input("Would you like to allow port 23 (Telnet) through the firewall, Yes (Y) or No (N):")
-                if (telnetAllow == "Y" or telnetAllow == "y"):
-                    ufw.add("allow 23")
-                    print("Port 23 has been added to the firewall.")
-            else:
+                with open('/etc/ufw/before.rules', 'r') as file:
+                    data = file.readlines()
+                data[38] = '-A ufw-before-input -p icmp --icmp-type destination-unreachable -j DROP\n'
+                data[39] = '-A ufw-before-input -p icmp --icmp-type source-quench -j DROP\n'
+                data[40] = '-A ufw-before-input -p icmp --icmp-type time-exceeded -j DROP\n'
+                data[41] = '-A ufw-before-input -p icmp --icmp-type parameter-problem -j DROP\n'
+                data[42] = '-A ufw-before-input -p icmp --icmp-type echo-request -j DROP\n'
+                with open('/etc/ufw/before.rules', 'w') as file:
+                    file.writelines( data )
+            print("/etc/ufw/before.rules has been updated to block ICMP")
+            telnetAllow = input("Would you like to allow port 23 (Telnet) through the firewall, Yes (Y) or No (N):")
+            if (telnetAllow == "Y" or telnetAllow == "y"):
+                ufw.add("allow 23")
+                print("Port 23 has been added to the firewall.")
+            elif (pingAllow == "N" or pingAllow == "n"):
                 telnetAllow = input("Would you like to allow port 23 (Telnet) through the firewall, Yes (Y) or No (N):")
                 if (telnetAllow == "Y" or telnetAllow == "y"):
                     ufw.add("allow 23")
